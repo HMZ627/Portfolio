@@ -1,690 +1,700 @@
 import streamlit as st
-import streamlit.components.v1 as components
 
-# Set full layout page config for Streamlit
+# Set Streamlit page configuration to full width
 st.set_page_config(
-    page_title="HMZ — Portfolio",
+    page_title="HMZ | Portfolio",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# Hide default Streamlit padding, header, and footer
-st.markdown("""
-    <style>
-        #MainMenu {visibility: hidden;}
-        header {visibility: hidden;}
-        footer {visibility: hidden;}
-        .block-container {
-            padding: 0rem !important;
-            max-width: 100% !important;
-        }
-        iframe {
-            border: none;
-            width: 100vw;
-            height: 100vh;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
-# Complete HTML/CSS/JS single-file application
-html_code = """
+# Render complete HTML/CSS/JS web application inside Streamlit
+st.components.v1.html(
+    """
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muhammad Zaki (HMZ) — Portfolio</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Muhammad Zaki | Portfolio</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Outfit:wght@400;600;800;900&family=Press+Start+2P&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* CSS RESET & VARIABLES */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --bg-black: #0B0B0C;
+      --text-white: #FFFFFF;
+      --lime-green: #C6F432;
+      --pk-green: #01411C;
+      --pos-green: #2ECC71;
+      --neg-red: #E74C3C;
+      --font-header: 'Outfit', sans-serif;
+      --font-sub: 'Space Grotesk', sans-serif;
+      --font-body: 'Montserrat', sans-serif;
+      --font-pixel: 'Press Start 2P', monospace;
+    }
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        midnight: '#0B0B0C',
-                        lime: '#C6F432',
-                        pakistan: '#01411C',
-                        negRed: '#FF3B30',
-                        posGreen: '#00C853'
-                    },
-                    fontFamily: {
-                        syne: ['Syne', 'sans-serif'],
-                        bebas: ['Bebas Neue', 'sans-serif'],
-                        space: ['Space Grotesk', 'sans-serif'],
-                        jakarta: ['Plus Jakarta Sans', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
+    html, body {
+      background-color: var(--bg-black);
+      color: var(--text-white);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    /* SMOOTH PAGE ENTRY FADE-IN */
+    body {
+      opacity: 0;
+      animation: pageFadeIn 1.5s ease-out forwards;
+    }
+    @keyframes pageFadeIn {
+      to { opacity: 1; }
+    }
 
-    <!-- FontAwesome for Logos -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    /* BACKGROUND GLOW AT LOWER CENTER */
+    .bg-glow {
+      position: fixed;
+      bottom: -150px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(198, 244, 50, 0.45) 0%, rgba(198, 244, 50, 0.15) 45%, rgba(11, 11, 12, 0) 80%);
+      filter: blur(60px);
+      pointer-events: none;
+      z-index: 1;
+      transition: opacity 0.8s ease, filter 0.8s ease;
+    }
 
-    <style>
-        /* Base resets & custom smooth setup */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-        }
+    /* PAKISTANI FLAG OVERLAY */
+    .flag-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(90deg, #ffffff 25%, #01411C 25%);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 2;
+      transition: opacity 1s ease-in-out;
+    }
+    .flag-overlay.active {
+      opacity: 0.18;
+    }
 
-        html, body {
-            background-color: #0B0B0C;
-            color: #FFFFFF;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
+    /* MAIN CONTAINER */
+    .container {
+      position: relative;
+      z-index: 5;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0B0B0C;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #222;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #C6F432;
-        }
+    /* SECTION 1: HERO OVERLAY ("Who is HMZ?") */
+    .hero-section {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+    }
+    .who-is-wrapper {
+      position: sticky;
+      top: 40vh;
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .who-is-title {
+      font-family: var(--font-header);
+      font-size: 1.5rem;
+      transform: scale(0.1);
+      opacity: 0;
+      letter-spacing: 2px;
+      animation: expandText 2s cubic-bezier(0.25, 1, 0.5, 1) forwards 0.5s;
+    }
+    .who-is-title span.hmz {
+      font-family: var(--font-pixel);
+      color: var(--lime-green);
+      font-size: 1.2em;
+    }
+    .cursor-anim {
+      display: inline-block;
+      width: 12px;
+      height: 35px;
+      background-color: var(--lime-green);
+      margin-left: 8px;
+      animation: blink 0.8s infinite alternate;
+    }
 
-        /* Concentrated Pixelated Blurred Lime Glow in Lower Center */
-        .ambient-glow {
-            position: fixed;
-            bottom: -15vh;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90vw;
-            max-width: 1000px;
-            height: 45vh;
-            background: radial-gradient(ellipse at bottom, rgba(198, 244, 50, 0.45) 0%, rgba(198, 244, 50, 0.2) 40%, rgba(11, 11, 12, 0) 80%);
-            filter: blur(70px);
-            pointer-events: none;
-            z-index: 1;
-            transition: opacity 0.8s ease, filter 0.8s ease, background 0.8s ease;
-        }
+    @keyframes expandText {
+      0% { transform: scale(0.05); opacity: 0; }
+      70% { opacity: 1; }
+      100% { transform: scale(2.8); opacity: 1; }
+    }
+    @keyframes blink {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
 
-        .ambient-glow.darkened {
-            background: radial-gradient(ellipse at bottom, rgba(198, 244, 50, 0.18) 0%, rgba(198, 244, 50, 0.05) 40%, rgba(11, 11, 12, 0) 80%);
-            filter: blur(90px);
-        }
+    /* SECTION 2: MUHAMMAD ZAKI & PORTRAIT */
+    .profile-section {
+      min-height: 120vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding: 100px 0;
+    }
+    .profile-content {
+      width: 55%;
+      z-index: 10;
+    }
 
-        /* Stretched Large Title styling for Muhammad Zaki */
-        .stretched-header {
-            font-family: 'Bebas Neue', sans-serif;
-            letter-spacing: 0.15em;
-            transform: scaleY(1.3);
-            transform-origin: left;
-            text-shadow: 0 0 30px rgba(198, 244, 50, 0.15);
-        }
+    /* CHARGING GLOW ANIMATION FOR NAME */
+    .zaki-name {
+      font-family: var(--font-header);
+      font-weight: 900;
+      font-size: 4.8rem;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      transform: scaleX(1.15);
+      transform-origin: left;
+      line-height: 1;
+      margin-bottom: 30px;
+      position: relative;
+      color: #333;
+      transition: color 0.3s ease, text-shadow 0.3s ease;
+    }
+    .zaki-name.charged {
+      color: var(--text-white);
+      text-shadow: 0 0 20px rgba(198, 244, 50, 0.8), 0 0 40px rgba(198, 244, 50, 0.4);
+      animation: dischargeFlash 0.6s ease-out forwards;
+    }
 
-        /* Charging background flash animation */
-        @keyframes chargePulse {
-            0% { opacity: 0; background-color: transparent; }
-            30% { opacity: 0.6; background-color: rgba(198, 244, 50, 0.25); box-shadow: 0 0 50px rgba(198, 244, 50, 0.8); }
-            70% { opacity: 1; background-color: rgba(255, 255, 255, 0.3); }
-            100% { opacity: 0; background-color: transparent; }
-        }
+    @keyframes dischargeFlash {
+      0% { text-shadow: 0 0 60px #C6F432, 0 0 100px #C6F432; color: #fff; }
+      50% { text-shadow: 0 0 30px #C6F432; }
+      100% { text-shadow: 0 0 10px rgba(198, 244, 50, 0.4); color: #fff; }
+    }
 
-        .charging-discharge {
-            animation: chargePulse 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
+    /* PORTRAIT CONTAINER & CINEMATIC LIGHTING */
+    .portrait-wrapper {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 45%;
+      height: 80vh;
+      opacity: 0;
+      transition: opacity 1s ease, transform 1s ease;
+      pointer-events: none;
+      z-index: 4;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+    .portrait-wrapper.visible {
+      opacity: 1;
+    }
+    .portrait-img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+      filter: grayscale(100%) contrast(120%);
+      mask-image: linear-gradient(to bottom, black 50%, transparent 95%), linear-gradient(to left, black 70%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 95%);
+    }
+    /* Lime green side light hitting face from outer right */
+    .portrait-wrapper::after {
+      content: '';
+      position: absolute;
+      top: 15%;
+      right: -20px;
+      width: 250px;
+      height: 350px;
+      background: radial-gradient(ellipse at right, rgba(198, 244, 50, 0.65) 0%, rgba(198, 244, 50, 0.2) 50%, transparent 80%);
+      mix-blend-mode: color-dodge;
+      pointer-events: none;
+    }
 
-        /* B&W Portrait with Lime Green Edge Lighting */
-        .portrait-cutout {
-            position: relative;
-            filter: grayscale(100%) contrast(120%) brightness(95%);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
-            object-fit: cover;
-            object-position: top center;
-        }
+    /* TYPEWRITER BIO DETAILS */
+    .bio-box {
+      font-family: var(--font-sub);
+      font-size: 1.15rem;
+      line-height: 1.8;
+      margin-top: 20px;
+    }
+    .bio-line {
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      margin-bottom: 12px;
+    }
+    .bio-line.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .lbl {
+      color: var(--lime-green);
+      font-weight: 700;
+      font-family: var(--font-header);
+    }
+    .pk-text {
+      color: var(--pk-green);
+      font-weight: 800;
+      text-shadow: 0 0 8px rgba(1, 65, 28, 0.8);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
 
-        /* Green Rim Light Overlay */
-        .portrait-container::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            background: linear-gradient(to left, rgba(198, 244, 50, 0.4) 0%, rgba(198, 244, 50, 0.1) 25%, transparent 60%);
-            mix-blend-mode: color-dodge;
-            pointer-events: none;
-            border-radius: inherit;
-        }
+    /* SECTION 3: 3D FLIP CARDS */
+    .cards-section {
+      padding: 120px 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 35px;
+      margin-top: 40px;
+    }
+    .flip-card {
+      background-color: transparent;
+      height: 340px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: left;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+      border-radius: 16px;
+    }
+    .flip-card:hover .flip-card-inner {
+      transform: rotateY(180deg) translateY(-8px);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      padding: 35px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    /* Front Card Style */
+    .flip-card-front {
+      background: #141416;
+      border: 2px solid rgba(198, 244, 50, 0.2);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+    .flip-card:hover .flip-card-front,
+    .flip-card:hover .flip-card-inner {
+      box-shadow: 0 0 25px rgba(198, 244, 50, 0.5);
+    }
+    .card-front-title {
+      font-family: var(--font-header);
+      font-size: 1.8rem;
+      color: var(--lime-green);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .card-hint {
+      margin-top: 15px;
+      font-size: 0.85rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
 
-        /* 3D Flip Cards */
-        .card-perspective {
-            perspective: 1200px;
-        }
+    /* Back Card Style (White background with black text) */
+    .flip-card-back {
+      background-color: #FFFFFF;
+      color: #0B0B0C;
+      transform: rotateY(180deg);
+      border: 2px solid var(--lime-green);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
 
-        .flip-card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            transform-style: preserve-3d;
-        }
+    /* HIGHLIGHT WORD STYLING */
+    .good-word {
+      color: var(--pos-green) !important;
+      font-weight: 700;
+    }
+    .bad-word {
+      color: var(--neg-red) !important;
+      font-weight: 700;
+    }
 
-        .card-perspective:hover .flip-card-inner {
-            transform: rotateY(180deg) translateY(-8px);
-        }
+    /* SECTION 4: CONTACT & OUTRO */
+    .contact-section {
+      padding: 120px 0 80px 0;
+      min-height: 100vh;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .scramble-header {
+      font-family: var(--font-header);
+      font-size: 2.8rem;
+      margin-bottom: 50px;
+      min-height: 70px;
+      letter-spacing: 1px;
+    }
 
-        .card-perspective:hover {
-            filter: drop-shadow(0 0 20px rgba(198, 244, 50, 0.5));
-        }
+    .boxes-wrapper {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      width: 100%;
+      max-width: 850px;
+      margin-bottom: 60px;
+    }
+    .contact-box {
+      flex: 1;
+      background: #141416;
+      border-radius: 20px;
+      padding: 35px 25px;
+      position: relative;
+      text-decoration: none;
+      color: var(--text-white);
+      border: 2px solid #222;
+      transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+      text-align: left;
+      display: block;
+    }
+    .contact-box:hover {
+      transform: translateY(-10px);
+      border-color: var(--lime-green);
+      box-shadow: 0 0 30px rgba(198, 244, 50, 0.4);
+    }
+    .box-icon {
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      font-size: 2rem;
+    }
+    .box-icon.wa { color: #25D366; }
+    .box-icon.insta {
+      background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .box-content {
+      margin-top: 45px;
+    }
+    .box-heading {
+      font-family: var(--font-header);
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+    .box-sub {
+      color: #aaa;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+    .box-detail {
+      font-family: var(--font-sub);
+      color: var(--lime-green);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
 
-        .flip-card-front, .flip-card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            border-radius: 1.25rem;
-        }
+    /* OUTRO TEXT LINES */
+    .outro-container {
+      margin-top: 20px;
+      line-height: 2;
+    }
+    .outro-line-1 { font-size: 1.1rem; color: #888; font-style: italic; }
+    .outro-line-2 { font-size: 1.2rem; color: #ccc; }
+    .outro-line-3 { font-size: 1.3rem; color: var(--lime-green); font-weight: 600; }
+    .outro-line-4 { font-size: 1.6rem; font-family: var(--font-header); font-weight: 800; margin-top: 10px; }
 
-        .flip-card-front {
-            background-color: #121214;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 2rem;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card-perspective:hover .flip-card-front {
-            border-color: #C6F432;
-        }
-
-        .flip-card-back {
-            background-color: #FFFFFF;
-            color: #0B0B0C;
-            transform: rotateY(180deg);
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            border: 2px solid #C6F432;
-        }
-
-        /* Pakistani Flag Dynamic Overlay */
-        #pakistan-flag-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 40;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-            background: linear-gradient(135deg, rgba(1, 65, 28, 0.85) 0%, rgba(0, 30, 12, 0.95) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .flag-crescent-star {
-            width: 280px;
-            height: 280px;
-            opacity: 0.15;
-            animation: spinSlow 30s linear infinite;
-        }
-
-        @keyframes spinSlow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* Glowing Contact Boxes */
-        .contact-box {
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
-        }
-
-        .contact-box:hover {
-            transform: translateY(-10px) scale(1.02);
-            border-color: #C6F432;
-            box-shadow: 0 0 35px rgba(198, 244, 50, 0.35);
-        }
-
-        /* Dynamic blinking cursor */
-        .cursor-blink::after {
-            content: '|';
-            animation: blink 1s infinite;
-            color: #C6F432;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-    </style>
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 900px) {
+      .cards-grid, .boxes-wrapper { grid-template-columns: 1fr; flex-direction: column; }
+      .profile-content { width: 100%; }
+      .portrait-wrapper { width: 100%; opacity: 0.2 !important; }
+      .zaki-name { font-size: 3rem; }
+      .who-is-title { font-size: 1rem; }
+    }
+  </style>
 </head>
+<body>
 
-<body class="bg-midnight text-white antialiased selection:bg-lime selection:text-midnight">
+  <!-- BACKGROUND GLOW & FLAG OVERLAY -->
+  <div class="bg-glow" id="bgGlow"></div>
+  <div class="flag-overlay" id="flagOverlay"></div>
 
-    <!-- Ambient Concentrated Pixelated Glow at Lower Center -->
-    <div id="ambientGlow" class="ambient-glow"></div>
+  <div class="container">
+    
+    <!-- SECTION 1: HERO OVERLAY -->
+    <section class="hero-section">
+      <div class="who-is-wrapper" id="whoIsWrapper">
+        <h1 class="who-is-title">Who is <span class="hmz">HMZ?</span><span class="cursor-anim"></span></h1>
+      </div>
+    </section>
 
-    <!-- Pakistani Flag Overlay Triggered on "Pakistan" text appearance -->
-    <div id="pakistan-flag-overlay">
-        <svg class="flag-crescent-star text-white fill-current" viewBox="0 0 100 100">
-            <path d="M 50 10 A 40 40 0 1 0 90 50 A 32 32 0 1 1 50 10 Z" />
-            <polygon points="65,25 69,37 81,37 71,45 75,57 65,49 55,57 59,45 49,37 61,37" />
+    <!-- SECTION 2: PROFILE & BIO -->
+    <section class="profile-section" id="profileSection">
+      <!-- PORTRAIT IMAGE CUTOUT -->
+      <div class="portrait-wrapper" id="portraitWrapper">
+        <!-- SVG CUTOUT PLACEHOLDER IN BLACK & WHITE WITH LIGHTING EFFECT -->
+        <svg class="portrait-img" viewBox="0 0 400 600" width="380" height="570" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="bw">
+              <feColorMatrix type="matrix" values="0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0 0 0 1 0"/>
+            </filter>
+          </defs>
+          <g filter="url(#bw)">
+            <!-- Head & Hair Silhouette -->
+            <path d="M 170 120 Q 200 70 250 110 Q 290 140 270 200 Q 260 250 220 270 Q 170 280 150 220 Q 140 160 170 120 Z" fill="#2a2a2c"/>
+            <path d="M 180 85 Q 240 70 270 115 Q 240 100 210 110 Z" fill="#111"/>
+            <!-- Face & Neck Cutout -->
+            <path d="M 180 140 Q 240 150 255 200 Q 230 255 190 245 Q 165 210 180 140 Z" fill="#666"/>
+            <!-- Beard / Facial Outline -->
+            <path d="M 185 200 Q 240 210 245 240 Q 210 260 185 240 Z" fill="#1c1c1e"/>
+            <!-- Coat & Torso (Chest part) -->
+            <path d="M 100 320 Q 200 270 310 320 L 350 600 L 60 600 Z" fill="#18181a"/>
+            <path d="M 160 290 L 200 450 L 240 290 Z" fill="#0d0d0e"/>
+            <path d="M 190 280 L 210 350 L 190 400 Z" fill="#3a3a3c"/>
+          </g>
         </svg>
-    </div>
+      </div>
 
-    <!-- MAIN SCROLL CONTAINER -->
-    <div class="relative w-full z-10">
+      <div class="profile-content">
+        <h2 class="zaki-name" id="zakiName">Muhammad Zaki</h2>
+        
+        <div class="bio-box">
+          <div class="bio-line" id="line1"><span class="lbl">Age:</span> 21 years</div>
+          <div class="bio-line" id="line2"><span class="lbl">Origin:</span> <span class="pk-text">Pakistan</span></div>
+          <div class="bio-line" id="line3"><span class="lbl">Does:</span> Vibe-coded web development<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Photography, Editing</div>
+          <div class="bio-line" id="line4"><span class="lbl">Skills:</span> "Good Listener, Cooking, Emotional support<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Support for you while making payments),<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mechanic, Electrician, Plumber, Grocery<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buyer, Half Doctor....... And the list goes on."</div>
+        </div>
+      </div>
+    </section>
 
-        <!-- SECTION 1: HERO "WHO IS HMZ?" -->
-        <section id="section1" class="h-screen w-full flex flex-col justify-center items-center relative px-4">
-            
-            <!-- Animated Virtual Cursor Effect -->
-            <div id="cursorFollower" class="fixed pointer-events-none transition-all duration-300 z-50 flex items-center justify-center opacity-0 scale-50">
-                <div class="w-6 h-6 border-2 border-lime rounded-full bg-lime/30 backdrop-blur-sm animate-ping"></div>
-                <i class="fa-solid fa-arrow-pointer text-lime text-2xl -ml-2 -mt-4 drop-shadow-[0_0_10px_#C6F432]"></i>
+    <!-- SECTION 3: 3D FLIP FLASH CARDS -->
+    <section class="cards-section">
+      <div class="cards-grid">
+        
+        <!-- CARD 1: PREMIUM COST -->
+        <div class="flip-card">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <div class="card-front-title">
+                <i class="fa-solid fa-crown"></i>
+                <span>Premium cost web-development</span>
+              </div>
+              <div class="card-hint">Hover to flip card <i class="fa-solid fa-rotate"></i></div>
             </div>
-
-            <!-- "Who is HMZ?" Text Header -->
-            <div id="heroHeaderContainer" class="text-center transition-all duration-700 transform scale-10 opacity-0 cursor-default">
-                <h1 class="text-4xl md:text-7xl lg:text-8xl font-syne font-bold tracking-tight text-white inline-block">
-                    Who is <span id="hmzSpan" class="font-bebas text-lime text-5xl md:text-8xl lg:text-9xl ml-3 tracking-wider drop-shadow-[0_0_25px_rgba(198,244,50,0.4)]">HMZ?</span>
-                </h1>
+            <div class="flip-card-back">
+              <p>
+                Premium costed website development includes custom bought domains, bought hosted platforms and premium methods, used to develop sites, so that it should be <span class="good-word">highly accessible</span>, with <span class="good-word">high performance score</span> and user experience, disabling sleeping of the website, which <span class="bad-word">ruins</span> the user experience.
+              </p>
             </div>
+          </div>
+        </div>
 
-            <!-- Scroll Indicator -->
-            <div id="scrollHint" class="absolute bottom-10 flex flex-col items-center gap-2 opacity-70 animate-bounce">
-                <span class="text-xs uppercase tracking-widest text-gray-400 font-jakarta">Scroll Down Slowly</span>
-                <i class="fa-solid fa-chevron-down text-lime"></i>
+        <!-- CARD 2: LOW COST -->
+        <div class="flip-card">
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <div class="card-front-title">
+                <i class="fa-solid fa-bolt"></i>
+                <span>Low cost web-development</span>
+              </div>
+              <div class="card-hint">Hover to flip card <i class="fa-solid fa-rotate"></i></div>
             </div>
-        </section>
-
-        <!-- SECTION 2: MUHAMMAD ZAKI & PORTRAIT & TYPEWRITER INFO -->
-        <section id="section2" class="min-h-screen w-full relative px-6 md:px-16 lg:px-24 py-20 flex flex-col justify-center">
-            
-            <!-- Cinematic Cutout Portrait (Fixed right side backdrop inside section 2) -->
-            <div id="portraitContainer" class="portrait-container absolute top-10 right-0 w-full md:w-1/2 lg:w-5/12 h-[80vh] pointer-events-none z-0 opacity-0 transition-opacity duration-1000">
-                <img id="portraitImg" 
-                     src="https://raw.githubusercontent.com/placeholder-user-asset/main/zaki_cutout.png" 
-                     alt="Muhammad Zaki" 
-                     class="portrait-cutout w-full h-full"
-                     onerror="this.src='https://placehold.co/600x900/0B0B0C/FFFFFF?text=Muhammad+Zaki+Portrait'" />
+            <div class="flip-card-back">
+              <p>
+                Low costed website development includes free domains issued by the hosting platform, hosted for free under the free tier of hosting platforms. Good for starting businesses and highly <span class="good-word">budget friendly</span>.<br><br>
+                <span class="bad-word">Cons</span> are:<br>
+                Website sleeps after some time of inactivity.<br>
+                <span class="bad-word">Cannot handle</span> high users traffic at a single time.
+              </p>
             </div>
+          </div>
+        </div>
 
-            <!-- Discharge Effect Overlay Box -->
-            <div id="dischargeFlash" class="absolute inset-0 pointer-events-none z-30"></div>
+      </div>
+    </section>
 
-            <div class="relative z-10 max-w-3xl">
-                <!-- Header "Muhammad Zaki" Sticked Left -->
-                <div id="nameHeaderContainer" class="opacity-0 transform -translate-x-12 transition-all duration-700">
-                    <p class="text-lime font-space text-sm tracking-widest uppercase mb-2">// Letter Format Intro</p>
-                    <h1 class="stretched-header text-6xl sm:text-8xl md:text-9xl font-bold text-white uppercase leading-none mb-8">
-                        MUHAMMAD ZAKI
-                    </h1>
-                </div>
+    <!-- SECTION 4: CONTACT & FINAL OUTRO -->
+    <section class="contact-section">
+      <h2 class="scramble-header" id="scrambleHeader">Wanna get in touch with me?</h2>
 
-                <!-- Scroll-linked Typewriter Details -->
-                <div id="typewriterBox" class="space-y-6 text-lg md:text-2xl font-jakarta leading-relaxed font-normal bg-midnight/60 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/5 opacity-0 transition-opacity duration-500">
-                    
-                    <!-- Line 1: Age -->
-                    <div id="lineAge" class="opacity-0 transition-opacity duration-300">
-                        <span class="text-lime font-space font-bold">Age:</span> <span class="text-white">21 years</span>
-                    </div>
+      <div class="boxes-wrapper">
+        <!-- WHATSAPP BOX -->
+        <a href="https://wa.me/923144012872" target="_blank" class="contact-box">
+          <i class="fa-brands fa-whatsapp box-icon wa"></i>
+          <div class="box-content">
+            <div class="box-heading">Got WhatsApp?</div>
+            <div class="box-sub">Reach out on WA</div>
+            <div class="box-detail">0314-4012872</div>
+          </div>
+        </a>
 
-                    <!-- Line 2: Origin -->
-                    <div id="lineOrigin" class="opacity-0 transition-opacity duration-300">
-                        <span class="text-lime font-space font-bold">Origin:</span> <span id="pakistanText" class="font-bold transition-colors duration-500 text-white">Pakistan</span>
-                    </div>
+        <!-- INSTAGRAM BOX -->
+        <a href="https://instagram.com/hmzaki._.rj" target="_blank" class="contact-box">
+          <i class="fa-brands fa-instagram box-icon insta"></i>
+          <div class="box-content">
+            <div class="box-heading">Got Instagram?</div>
+            <div class="box-sub">Reach out on Insta</div>
+            <div class="box-detail">hmzaki._.rj</div>
+          </div>
+        </a>
+      </div>
 
-                    <!-- Line 3: Does -->
-                    <div id="lineDoes" class="opacity-0 transition-opacity duration-300">
-                        <span class="text-lime font-space font-bold">Does:</span> <span class="text-white">Vibe-coded web development, Photography, Editing</span>
-                    </div>
+      <!-- OUTRO TEXT LINES -->
+      <div class="outro-container">
+        <p class="outro-line-1">Nervous to talk to me?</p>
+        <p class="outro-line-2">"Take the first step, as you did for her"</p>
+        <p class="outro-line-3">"Trust me, I'm friendly"</p>
+        <p class="outro-line-4">"Get your ideas converted into your dream-web"</p>
+      </div>
+    </section>
 
-                    <!-- Line 4: Skills -->
-                    <div id="lineSkills" class="opacity-0 transition-opacity duration-300">
-                        <span class="text-lime font-space font-bold block mb-1">Skills:</span> 
-                        <span class="text-white/90 text-base md:text-xl leading-loose">
-                            Good Listener, Cooking, Emotional support <span class="text-gray-400 text-sm md:text-base">(Support for you while making payments)</span>, Mechanic, Electrician, Plumber, Grocery buyer, Half Doctor....... And the list goes on.
-                        </span>
-                    </div>
+  </div>
 
-                </div>
-            </div>
-        </section>
+  <!-- INTERACTIVE SCROLL & ANIMATION SCRIPT -->
+  <script>
+    const whoIsWrapper = document.getElementById('whoIsWrapper');
+    const zakiName = document.getElementById('zakiName');
+    const portraitWrapper = document.getElementById('portraitWrapper');
+    const flagOverlay = document.getElementById('flagOverlay');
+    const bgGlow = document.getElementById('bgGlow');
+    const scrambleHeader = document.getElementById('scrambleHeader');
+    
+    const lines = [
+      document.getElementById('line1'),
+      document.getElementById('line2'),
+      document.getElementById('line3'),
+      document.getElementById('line4')
+    ];
 
-        <!-- SECTION 3: FLASHCARDS (PREMIUM VS LOW COST) -->
-        <section id="section3" class="min-h-screen w-full px-6 md:px-16 lg:px-24 py-24 flex flex-col justify-center items-center">
-            
-            <div class="text-center mb-16">
-                <span class="text-lime font-space uppercase tracking-widest text-sm">// Web Development Services</span>
-                <h2 class="text-3xl md:text-5xl font-syne font-bold text-white mt-2">Choose Your Scale</h2>
-            </div>
+    let flagTriggered = false;
 
-            <!-- Two Flip Flashcards Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 w-full max-w-5xl">
-                
-                <!-- CARD 1: PREMIUM COST -->
-                <div class="card-perspective h-[380px] sm:h-[340px] w-full cursor-pointer">
-                    <div class="flip-card-inner">
-                        <!-- Front -->
-                        <div class="flip-card-front shadow-2xl">
-                            <div>
-                                <div class="w-14 h-14 rounded-2xl bg-lime/10 text-lime flex items-center justify-center mx-auto mb-4 border border-lime/30">
-                                    <i class="fa-solid fa-crown text-2xl"></i>
-                                </div>
-                                <h3 class="font-syne font-bold text-2xl text-white">Premium cost web-development</h3>
-                                <p class="text-xs text-gray-400 font-space mt-3 uppercase tracking-wider">Hover / Tap to Reveal Details</p>
-                            </div>
-                        </div>
-                        <!-- Back -->
-                        <div class="flip-card-back shadow-2xl">
-                            <h4 class="font-syne font-bold text-xl mb-3 text-midnight">Premium Experience</h4>
-                            <p class="text-sm md:text-base font-jakarta leading-relaxed text-gray-800">
-                                Premium costed website development includes custom bought domains, bought hosted platforms and premium methods, used to develop sites, so that it should be 
-                                <span class="text-posGreen font-bold bg-posGreen/10 px-1 py-0.5 rounded">Highly accessible</span>, with 
-                                <span class="text-posGreen font-bold bg-posGreen/10 px-1 py-0.5 rounded">High performance score</span> and 
-                                <span class="text-posGreen font-bold bg-posGreen/10 px-1 py-0.5 rounded">user experience</span>, disabling sleeping of the website, which 
-                                <span class="text-negRed font-bold bg-negRed/10 px-1 py-0.5 rounded">ruins</span> the user experience.
-                            </p>
-                        </div>
-                    </div>
-                </div>
+    // SCRAMBLE TEXT EFFECT
+    const targetText = "Wanna get in touch with me?";
+    const chars = "!@#$%^&*()_+-=AXBYCZ123456789";
+    let scrambleInterval = null;
 
-                <!-- CARD 2: LOW COST -->
-                <div class="card-perspective h-[380px] sm:h-[340px] w-full cursor-pointer">
-                    <div class="flip-card-inner">
-                        <!-- Front -->
-                        <div class="flip-card-front shadow-2xl">
-                            <div>
-                                <div class="w-14 h-14 rounded-2xl bg-white/5 text-white flex items-center justify-center mx-auto mb-4 border border-white/20">
-                                    <i class="fa-solid fa-bolt text-2xl text-lime"></i>
-                                </div>
-                                <h3 class="font-syne font-bold text-2xl text-white">Low cost web-development</h3>
-                                <p class="text-xs text-gray-400 font-space mt-3 uppercase tracking-wider">Hover / Tap to Reveal Details</p>
-                            </div>
-                        </div>
-                        <!-- Back -->
-                        <div class="flip-card-back shadow-2xl">
-                            <h4 class="font-syne font-bold text-xl mb-2 text-midnight">Budget Tier</h4>
-                            <p class="text-xs md:text-sm font-jakarta leading-relaxed text-gray-800 mb-2">
-                                Low costed website development includes free domains issued by the hosting platform, hosted for free under the free tier of hosting platforms. 
-                                <span class="text-posGreen font-bold bg-posGreen/10 px-1 py-0.5 rounded">Good for starting businesses</span> and highly 
-                                <span class="text-posGreen font-bold bg-posGreen/10 px-1 py-0.5 rounded">budget friendly</span>.
-                            </p>
-                            <p class="text-xs md:text-sm font-jakarta leading-relaxed text-gray-800">
-                                <strong class="text-negRed font-bold">Cons are:</strong><br>
-                                Website <span class="text-negRed font-bold bg-negRed/10 px-1 py-0.5 rounded">sleeps</span> after some time of 
-                                <span class="text-negRed font-bold bg-negRed/10 px-1 py-0.5 rounded">inactivity</span>. 
-                                <span class="text-negRed font-bold bg-negRed/10 px-1 py-0.5 rounded">Cannot handle</span> high users traffic at a single time.
-                            </p>
-                        </div>
-                    </div>
-                </div>
+    function runScramble() {
+      let iteration = 0;
+      clearInterval(scrambleInterval);
+      scrambleInterval = setInterval(() => {
+        scrambleHeader.innerText = targetText.split("")
+          .map((letter, index) => {
+            if(index < iteration) return targetText[index];
+            return chars[Math.floor(Math.random() * chars.length)];
+          }).join("");
 
-            </div>
-        </section>
+        if(iteration >= targetText.length) {
+          clearInterval(scrambleInterval);
+        }
+        iteration += 1 / 2;
+      }, 30);
+    }
 
-        <!-- SECTION 4: CONTACT & FINAL TOUCH -->
-        <section id="section4" class="min-h-screen w-full px-6 md:px-16 lg:px-24 py-20 flex flex-col justify-center items-center">
-            
-            <!-- Scrambled Header Text -->
-            <div class="mb-16 text-center">
-                <h2 id="scrambleHeader" class="text-3xl sm:text-5xl md:text-6xl font-syne font-bold text-white tracking-tight">
-                    Wanna get in touch with me?
-                </h2>
-                <div class="w-24 h-1 bg-lime mx-auto mt-4 rounded-full"></div>
-            </div>
+    // MAIN SCROLL HANDLER (BIDIRECTIONAL)
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
 
-            <!-- Contact Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mb-16">
-                
-                <!-- WHATSAPP BOX -->
-                <a href="https://wa.me/923144012872" target="_blank" class="contact-box bg-midnight/90 border border-white/10 p-8 rounded-3xl relative block overflow-hidden group">
-                    <div class="absolute top-6 left-6 text-emerald-500 text-3xl">
-                        <i class="fa-brands fa-whatsapp"></i>
-                    </div>
-                    <div class="pt-10 text-left">
-                        <h3 class="font-syne font-bold text-2xl text-white mb-2">Got WhatsApp?</h3>
-                        <p class="text-gray-400 font-jakarta text-sm mb-4">Reach out on WA</p>
-                        <span class="text-lime font-space font-bold text-xl tracking-wider group-hover:underline">0314-4012872</span>
-                    </div>
-                    <div class="absolute bottom-6 right-6 text-gray-600 group-hover:text-lime transition-colors">
-                        <i class="fa-solid fa-arrow-up-right-from-square text-lg"></i>
-                    </div>
-                </a>
+      // 1. "Who is HMZ?" Fade Away on Scroll
+      const heroFadeThreshold = windowHeight * 0.5;
+      if (scrollY < heroFadeThreshold) {
+        whoIsWrapper.style.opacity = 1 - (scrollY / heroFadeThreshold);
+        whoIsWrapper.style.transform = `translateY(-${scrollY * 0.4}px)`;
+      } else {
+        whoIsWrapper.style.opacity = 0;
+      }
 
-                <!-- INSTAGRAM BOX -->
-                <a href="https://instagram.com/hmzaki._.rj" target="_blank" class="contact-box bg-midnight/90 border border-white/10 p-8 rounded-3xl relative block overflow-hidden group">
-                    <div class="absolute top-6 left-6 text-pink-500 text-3xl">
-                        <i class="fa-brands fa-instagram"></i>
-                    </div>
-                    <div class="pt-10 text-left">
-                        <h3 class="font-syne font-bold text-2xl text-white mb-2">Got Instagram?</h3>
-                        <p class="text-gray-400 font-jakarta text-sm mb-4">Reach out on Insta</p>
-                        <span class="text-lime font-space font-bold text-xl tracking-wider group-hover:underline">hmzaki._.rj</span>
-                    </div>
-                    <div class="absolute bottom-6 right-6 text-gray-600 group-hover:text-lime transition-colors">
-                        <i class="fa-solid fa-arrow-up-right-from-square text-lg"></i>
-                    </div>
-                </a>
+      // 2. "Muhammad Zaki" Discharge & Portrait Fade-In
+      const profileSection = document.getElementById('profileSection');
+      const profileRect = profileSection.getBoundingClientRect();
 
-            </div>
+      if (profileRect.top < windowHeight * 0.75 && profileRect.bottom > 0) {
+        zakiName.classList.add('charged');
+        portraitWrapper.classList.add('visible');
+      } else {
+        zakiName.classList.remove('charged');
+        portraitWrapper.classList.remove('visible');
+      }
 
-            <!-- Closing Text Block -->
-            <div class="text-center space-y-3 font-jakarta max-w-2xl">
-                <p class="text-gray-400 text-lg italic">Nervous to talk to me?</p>
-                <p class="text-white text-xl font-semibold">"Take the first step, as you did for her"</p>
-                <p class="text-lime font-space text-lg font-medium">Trust me, I'm friendly</p>
-                <p class="text-gray-300 text-sm md:text-base pt-2 font-light tracking-wide uppercase">Get your ideas converted into your dream-web</p>
-            </div>
-
-            <footer class="mt-20 text-xs text-gray-600 font-space tracking-widest">
-                &copy; HMZ — MUHAMMAD ZAKI. ALL RIGHTS RESERVED.
-            </footer>
-        </section>
-
-    </div>
-
-    <!-- JAVASCRIPT CONTROLLERS (Bidirectional Scroll Animations & Logic) -->
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            
-            // Initial Page Fade In
-            document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 1.2s ease-out';
-            setTimeout(() => { document.body.style.opacity = '1'; }, 100);
-
-            // DOM Element Handles
-            const heroHeaderContainer = document.getElementById('heroHeaderContainer');
-            const cursorFollower = document.getElementById('cursorFollower');
-            const portraitContainer = document.getElementById('portraitContainer');
-            const nameHeaderContainer = document.getElementById('nameHeaderContainer');
-            const typewriterBox = document.getElementById('typewriterBox');
-            const dischargeFlash = document.getElementById('dischargeFlash');
-            const pakistanText = document.getElementById('pakistanText');
-            const flagOverlay = document.getElementById('pakistan-flag-overlay');
-            const ambientGlow = document.getElementById('ambientGlow');
-            const scrambleHeader = document.getElementById('scrambleHeader');
-
-            const lineAge = document.getElementById('lineAge');
-            const lineOrigin = document.getElementById('lineOrigin');
-            const lineDoes = document.getElementById('lineDoes');
-            const lineSkills = document.getElementById('lineSkills');
-
-            let hasDischarged = false;
-            let flagTriggered = false;
-
-            // SECTION 1: Entry Cursor & Text Scale Animation
+      // 3. Typewriter Line Reveal & Pakistan Flag Pulse
+      lines.forEach((line, idx) => {
+        if (profileRect.top < windowHeight * (0.6 - idx * 0.1)) {
+          line.classList.add('show');
+          
+          // Trigger Pakistani Flag on line 2 ("Pakistan")
+          if (idx === 1 && !flagTriggered) {
+            flagTriggered = true;
+            flagOverlay.classList.add('active');
             setTimeout(() => {
-                cursorFollower.style.opacity = '1';
-                cursorFollower.style.transform = 'scale(1) translate(-50%, -50%)';
-                
-                setTimeout(() => {
-                    heroHeaderContainer.style.opacity = '1';
-                    heroHeaderContainer.style.transform = 'scale(1)';
-                    
-                    setTimeout(() => {
-                        cursorFollower.style.opacity = '0';
-                        cursorFollower.style.transform = 'scale(0.2)';
-                    }, 800);
-                }, 400);
-            }, 600);
+              flagOverlay.classList.remove('active');
+            }, 5000);
+          }
+        } else {
+          line.classList.remove('show');
+          if (idx === 1) flagTriggered = false;
+        }
+      });
 
-            // Scramble Text Logic
-            const originalScrambleText = "Wanna get in touch with me?";
-            const scrambleChars = "!@#$%^&*()_+-=X0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            let scrambleInterval = null;
+      // 4. Background Glow Darkening near Contact Section
+      const totalDocHeight = document.documentElement.scrollHeight - windowHeight;
+      const scrollPercent = scrollY / totalDocHeight;
+      
+      if (scrollPercent > 0.6) {
+        bgGlow.style.opacity = Math.max(0.2, 1 - (scrollPercent - 0.6) * 2);
+        bgGlow.style.filter = "blur(100px)";
+      } else {
+        bgGlow.style.opacity = 1;
+        bgGlow.style.filter = "blur(60px)";
+      }
 
-            function runScramble() {
-                let iteration = 0;
-                clearInterval(scrambleInterval);
-                scrambleInterval = setInterval(() => {
-                    scrambleHeader.innerText = originalScrambleText
-                        .split("")
-                        .map((char, index) => {
-                            if (index < iteration) return originalScrambleText[index];
-                            if (char === " ") return " ";
-                            return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
-                        })
-                        .join("");
+      // 5. Scramble Text Header Animation on Scroll into view
+      const contactSection = document.querySelector('.contact-section');
+      const contactRect = contactSection.getBoundingClientRect();
 
-                    if (iteration >= originalScrambleText.length) {
-                        clearInterval(scrambleInterval);
-                    }
-                    iteration += 1 / 2;
-                }, 30);
-            }
-
-            // Flag Overlay 5-Second Trigger
-            function triggerPakistanFlag() {
-                if (flagTriggered) return;
-                flagTriggered = true;
-                
-                // Color change to Dark Green
-                pakistanText.style.color = '#01411C';
-                flagOverlay.style.opacity = '1';
-
-                setTimeout(() => {
-                    flagOverlay.style.opacity = '0';
-                    setTimeout(() => {
-                        pakistanText.style.color = '#FFFFFF';
-                    }, 1000);
-                }, 5000);
-            }
-
-            // BIDIRECTIONAL SCROLL ENGINE
-            window.addEventListener('scroll', () => {
-                const scrollY = window.scrollY;
-                const windowHeight = window.innerHeight;
-
-                // 1. HERO FADE OUT ON SCROLL
-                const heroFadeFactor = Math.max(0, 1 - (scrollY / (windowHeight * 0.6)));
-                heroHeaderContainer.style.opacity = heroFadeFactor;
-                heroHeaderContainer.style.transform = `scale(${0.6 + (heroFadeFactor * 0.4)})`;
-
-                // 2. SECTION 2 APPEARANCE & PORTRAIT & DISCHARGE ANIMATION
-                const sec2Top = document.getElementById('section2').offsetTop;
-                if (scrollY > sec2Top - (windowHeight * 0.7) && scrollY < sec2Top + windowHeight) {
-                    
-                    // Show Name & Portrait
-                    nameHeaderContainer.style.opacity = '1';
-                    nameHeaderContainer.style.transform = 'translateX(0)';
-                    portraitContainer.style.opacity = '1';
-
-                    // Discharge Charging Animation
-                    if (!hasDischarged) {
-                        hasDischarged = true;
-                        dischargeFlash.classList.add('charging-discharge');
-                    }
-
-                    // Scroll-driven Typewriter lines reveal
-                    const relScroll = scrollY - (sec2Top - windowHeight * 0.4);
-                    
-                    if (relScroll > 100) lineAge.style.opacity = '1';
-                    else lineAge.style.opacity = '0';
-
-                    if (relScroll > 180) {
-                        lineOrigin.style.opacity = '1';
-                        triggerPakistanFlag();
-                    } else lineOrigin.style.opacity = '0';
-
-                    if (relScroll > 260) lineDoes.style.opacity = '1';
-                    else lineDoes.style.opacity = '0';
-
-                    if (relScroll > 340) lineSkills.style.opacity = '1';
-                    else lineSkills.style.opacity = '0';
-
-                    typewriterBox.style.opacity = '1';
-                } else {
-                    // Reversible fade-out when scrolling away
-                    if (scrollY < sec2Top - (windowHeight * 0.8)) {
-                        nameHeaderContainer.style.opacity = '0';
-                        nameHeaderContainer.style.transform = 'translateX(-3rem)';
-                        portraitContainer.style.opacity = '0';
-                        typewriterBox.style.opacity = '0';
-                        hasDischarged = false;
-                    }
-                }
-
-                // Portrait Fade Out into Black when moving to Section 3
-                const sec3Top = document.getElementById('section3').offsetTop;
-                if (scrollY > sec3Top - (windowHeight * 0.5)) {
-                    portraitContainer.style.opacity = '0';
-                }
-
-                // 3. DARKEN BACKGROUND AMBIENT GLOW ON DEEPER SCROLL
-                const sec4Top = document.getElementById('section4').offsetTop;
-                if (scrollY > sec3Top + 100) {
-                    ambientGlow.classList.add('darkened');
-                } else {
-                    ambientGlow.classList.remove('darkened');
-                }
-
-                // 4. SCRAMBLE TEXT ON FINAL SECTION
-                if (scrollY > sec4Top - (windowHeight * 0.6)) {
-                    if (!scrambleHeader.classList.contains('scrambled-done')) {
-                        scrambleHeader.classList.add('scrambled-done');
-                        runScramble();
-                    }
-                } else {
-                    scrambleHeader.classList.remove('scrambled-done');
-                }
-            });
-
-        });
-    </script>
+      if (contactRect.top < windowHeight * 0.8 && !scrambleHeader.dataset.scrambled) {
+        scrambleHeader.dataset.scrambled = "true";
+        runScramble();
+      } else if (contactRect.top >= windowHeight * 0.8) {
+        scrambleHeader.dataset.scrambled = "";
+      }
+    });
+  </script>
 </body>
 </html>
-"""
-
-# Render HTML Application inside Streamlit container
-components.html(html_code, height=950, scrolling=True)
-```
-
-I have assembled the complete code for your introductory website and Streamlit app.
-
-### Key Features Included:
-1. **Color & Ambient Glow:** Custom `#0B0B0C` background, `#FFFFFF` text, and `#C6F432` lime accents with a pixelated ambient glow at the bottom center that darkens dynamically upon scrolling.
-2. **Hero Animation:** Cursor scaling transition that expands "Who is HMZ?" smoothly before disappearing.
-3. **Cinematic Cutout Portrait & Lighting:** The black-and-white cutout portrait sits on the right side behind the left-aligned header text "Muhammad Zaki", featuring a lime green rim lighting highlight that fades cleanly into black as you scroll.
-4. **Interactive Scroll & Typewriter Lines:** Smooth scroll-linked typewriter sequence for your age, origin, does, and skills.
-5. **Pakistani Flag Effect:** Triggering a 5-second green overlay when the word "Pakistan" appears on screen.
-6. **3D Flip Flashcards:** Interactive cards with glowing edges that flip on hover, highlighting positive words in green and negative words in red.
-7. **Contact Links & Text Unscrambling:** Direct links to WhatsApp (`0314-4012872`) and Instagram (`hmzaki._.rj`) with custom hover states, complete with the final unscramble header transition.
+    """,
+    height=3200,
+    scrolling=True
+)
